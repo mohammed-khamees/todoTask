@@ -6,11 +6,13 @@ const {
 	deleteTasksById,
 } = require('./../controllers/tasks');
 
+const authorization = require('./../middlewares/authorization');
+
 const tasksRouter = express.Router();
 
-tasksRouter.get('/', getAllTasks);
-tasksRouter.post('/', createNewTasks);
-tasksRouter.put('/:id', updateAnTasksById);
-tasksRouter.delete('/:id', deleteTasksById);
+tasksRouter.get('/', authorization, getAllTasks);
+tasksRouter.post('/', authorization, createNewTasks);
+tasksRouter.put('/:id', authorization, updateAnTasksById);
+tasksRouter.delete('/:id', authorization, deleteTasksById);
 
 module.exports = tasksRouter;

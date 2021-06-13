@@ -50,4 +50,18 @@ user.statics.authenticateBasic = async function (email, password) {
 	}
 };
 
+// BEARER AUTH
+user.statics.authenticateWithToken = async function (token) {
+	try {
+		const parsedToken = jwt.verify(token, process.env.SECRET);
+		const user = await this.findOne({ username: parsedToken.username });
+		if (user) {
+			return user;
+		}
+		throw new Error('User Not Found');
+	} catch (e) {
+		throw new Error(e.message);
+	}
+};
+
 module.exports = mongoose.model('User', user);
