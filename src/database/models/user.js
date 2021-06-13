@@ -3,15 +3,31 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const user = new mongoose.Schema({
-	firstName: { type: String },
-	lastName: { type: String },
-	password: { type: String, required: true },
+	firstName: { type: String, required: true },
+	lastName: { type: String, required: true },
+	email: { type: String, required: true, unique: true },
+	password: { type: String, required: true, min: 6, max: 18 },
 });
 
 // Hashed the password
 user.pre('save', async function () {
-	this.email = this.email.toLowerCase();
-	this.password = await bcrypt.hash(this.password, 10);
+	try {
+		this.email = this.email.toLowerCase();
+		this.password = await bcrypt.hash(this.password, Number(process.env.SALT));
+	} catch (error) {
+		throw new Error(error.message);
+	}
+});
+
+user.pre('findOneAndUpdate', async function () {
+	try {
+		this._update.password = await bcrypt.hash(
+			this._update.password,
+			Number(process.env.SALT),
+		);
+	} catch (error) {
+		throw new Error(error.message);
+	}
 });
 
 // BASIC AUTH
@@ -22,15 +38,11 @@ user.statics.authenticateBasic = async function (email, password) {
 
 		const valid = await bcrypt.compare(password, user.password);
 		if (valid) {
-			const payload = {
-				userId: user._id,
-			};
-
 			const options = {
 				expiresIn: '60m',
 			};
 
-			return [jwt.sign(payload, process.env.SECRET, options), 200];
+			return jwt.sign({ user }, process.env.SECRET, options);
 		}
 		return ['The password you’ve entered is incorrect', 403];
 	} catch (error) {

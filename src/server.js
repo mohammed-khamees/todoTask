@@ -8,6 +8,11 @@ const cors = require('cors');
 const app = express();
 
 //routers
+const registerRouter = require('./router/auth/routes/register');
+const loginRouter = require('./router/auth/routes/login');
+
+const tasksRouter = require('./router/routes/tasks');
+
 const errorHandler = require('./router/error-handlers/500.js');
 const notFound = require('./router/error-handlers/404.js');
 
@@ -18,6 +23,9 @@ app.use(express.json());
 app.use(cors());
 
 // App Level MW
+app.use(registerRouter);
+app.use(loginRouter);
+app.use('/tasks', tasksRouter);
 app.use('*', notFound);
 app.use(errorHandler);
 

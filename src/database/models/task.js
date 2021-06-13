@@ -5,6 +5,7 @@ const task = new mongoose.Schema({
 	description: { type: String, required: true },
 	priority: { type: String, required: true },
 	isCompleted: { type: Boolean, default: false },
+	time: { type: Date, default: new Date().toUTCString() },
 	user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
