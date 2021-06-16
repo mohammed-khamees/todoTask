@@ -38,11 +38,7 @@ user.statics.authenticateBasic = async function (email, password) {
 
 		const valid = await bcrypt.compare(password, user.password);
 		if (valid) {
-			const options = {
-				expiresIn: '60m',
-			};
-
-			return jwt.sign({ user }, process.env.SECRET, options);
+			return jwt.sign({ user }, process.env.SECRET);
 		}
 		return ['The password you’ve entered is incorrect', 403];
 	} catch (error) {
