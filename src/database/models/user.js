@@ -3,10 +3,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const user = new mongoose.Schema({
-	firstName: { type: String, required: true },
-	lastName: { type: String, required: true },
+	firstName: { type: String, required: true, minLength: 3, maxLength: 18 },
+	lastName: { type: String, required: true, minLength: 3, maxLength: 18 },
 	email: { type: String, required: true, unique: true },
-	password: { type: String, required: true, min: 6, max: 18 },
+	password: { type: String, required: true, minLength: 6, maxLength: 18 },
 });
 
 // Hashed the password
@@ -18,6 +18,11 @@ user.pre('save', async function () {
 		throw new Error(error.message);
 	}
 });
+
+user.path('email').validate(function (email) {
+	const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	return emailRegex.test(email);
+}, 'Please fill a valid email address');
 
 user.pre('findOneAndUpdate', async function () {
 	try {
@@ -50,7 +55,8 @@ user.statics.authenticateBasic = async function (email, password) {
 user.statics.authenticateWithToken = async function (token) {
 	try {
 		const parsedToken = jwt.verify(token, process.env.SECRET);
-		const user = await this.findOne({ username: parsedToken.username });
+		console.log(parsedToken.user);
+		const user = await this.findOne({ email: parsedToken.user.email });
 		if (user) {
 			return user;
 		}

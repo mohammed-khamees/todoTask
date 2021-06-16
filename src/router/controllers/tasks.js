@@ -7,7 +7,7 @@ const getAllTasks = async (req, res) => {
 		const tasks = await taskCollection.get();
 		res.status(200).json(tasks);
 	} catch (error) {
-		res.status(404).json(error);
+		res.status(404).json(error.message);
 	}
 };
 
@@ -16,7 +16,7 @@ const createNewTasks = async (req, res) => {
 		const tasks = await taskCollection.create(req.body);
 		res.status(201).json(tasks);
 	} catch (error) {
-		res.status(400).json(error);
+		res.status(400).json(error.message);
 	}
 };
 
@@ -28,7 +28,7 @@ const updateAnTasksById = async (req, res) => {
 
 		res.status(200).json(tasks);
 	} catch (error) {
-		res.status(400).json(error);
+		res.status(400).json(error.message);
 	}
 };
 
@@ -40,7 +40,7 @@ const deleteTasksById = async (req, res) => {
 
 		res.status(200).json(tasks);
 	} catch (error) {
-		res.status(400).json(error);
+		res.status(400).json(error.message);
 	}
 };
 
