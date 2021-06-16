@@ -1,6 +1,6 @@
 # todo API
 
-## root route [root](https://todoapi-khamees.herokuapp.com)
+## [root route](https://todoapi-khamees.herokuapp.com)
 
 ## registration endpoints
 
